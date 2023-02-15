@@ -52,7 +52,7 @@ class Micropost
         return $this;
     }
 
-    public function getDatetime(): ?string
+    public function getDatetime(): ?DateTime
     {
         return $this->datetime;
     }
