@@ -3,7 +3,9 @@
 {% block title %}
   Editing Post
 {% endblock %}
-
+{% block bread %}
+  👉🏻 Edit Post
+{% endblock %}
 {% block body %}
   {{ include('micropost/_form.html.twig') }}
 {% endblock %}
