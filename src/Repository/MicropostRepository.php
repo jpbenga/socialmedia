@@ -36,8 +36,9 @@ class MicropostRepository extends ServiceEntityRepository
 
         if ($flush) {
             $this->getEntityManager()->flush();
-        }
+        } 
     }
+    
 
 //    /**
 //     * @return Micropost[] Returns an array of Micropost objects
