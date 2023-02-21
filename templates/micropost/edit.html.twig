@@ -4,7 +4,7 @@
   Editing Post
 {% endblock %}
 {% block bread %}
-  👉🏻 Edit Post
+  👉🏻<a href="{{ path('app_micropost_show', { post: post.id }) }}">Edit</a> 👉🏻 Post
 {% endblock %}
 {% block body %}
   {{ include('micropost/_form.html.twig') }}

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MicropostRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,6 +29,18 @@ class Micropost
 
    #[ORM\Column(type: 'datetime' , options:["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTime $datetime = null;
+
+   #[ORM\OneToMany(mappedBy: 'post', targetEntity: comment::class, orphanRemoval: true)]
+   private Collection $comments;
+
+   #[ORM\ManyToMany(targetEntity: user::class, inversedBy: 'liked')]
+   private Collection $likedBy;
+
+   public function __construct()
+   {
+       $this->comments = new ArrayCollection();
+       $this->likedBy = new ArrayCollection();
+   }
 
     public function getId(): ?int
     {
@@ -65,6 +79,60 @@ class Micropost
     public function setDatetime(DateTime $datetime): self
     {
         $this->datetime = $datetime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getPost() === $this) {
+                $comment->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, user>
+     */
+    public function getLikedBy(): Collection
+    {
+        return $this->likedBy;
+    }
+
+    public function addLikedBy(user $likedBy): self
+    {
+        if (!$this->likedBy->contains($likedBy)) {
+            $this->likedBy->add($likedBy);
+        }
+
+        return $this;
+    }
+
+    public function removeLikedBy(user $likedBy): self
+    {
+        $this->likedBy->removeElement($likedBy);
 
         return $this;
     }

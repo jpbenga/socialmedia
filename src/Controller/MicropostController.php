@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Micropost;
-use App\Form\MicroPostType;
-use App\Repository\MicropostRepository;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\Comment;
+use App\Entity\Micropost;
+use App\Form\CommentType;
+use App\Form\MicroPostType;
+use App\Repository\CommentRepository;
+use App\Repository\MicropostRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MicropostController extends AbstractController
 {
@@ -66,7 +69,31 @@ class MicropostController extends AbstractController
         }
 
         return $this->renderForm('micropost/edit.html.twig', [
-            'form' => $form
+            'form' => $form,
+            'post' => $post
+        ]);    
+    }
+
+    #[Route('/micropost/{post}/comment', name: 'app_micropost_comment')]
+    public function addComment(Micropost $post, Request $request, CommentRepository $comments): Response
+    {
+        
+        $form = $this->createForm(CommentType::class, new Comment());
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()){
+            $comment = $form->getData();
+            $comment->setPost($post);
+            $comments->add($comment, true);
+
+            $this->addFlash('success', 'Your comment has been updated succesfully');
+
+            return $this->redirectToRoute('app_micropost_show', ['post' => $post->getId()]);
+        }
+
+        return $this->renderForm('micropost/comment.html.twig', [
+            'form' => $form,
+            'post' => $post
         ]);    
     }
 }
