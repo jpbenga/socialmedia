@@ -30,10 +30,10 @@ class Micropost
    #[ORM\Column(type: 'datetime' , options:["default" => "CURRENT_TIMESTAMP"])]
     private ?DateTime $datetime = null;
 
-   #[ORM\OneToMany(mappedBy: 'post', targetEntity: comment::class, orphanRemoval: true)]
+   #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true)]
    private Collection $comments;
 
-   #[ORM\ManyToMany(targetEntity: user::class, inversedBy: 'liked')]
+   #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'liked')]
    private Collection $likedBy;
 
    public function __construct()
